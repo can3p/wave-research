@@ -15,4 +15,5 @@
   :components ((:module "src"
                 :components (
                              (:file "wave-research"))))
-  :depends-on (:cl-portaudio))
+  :depends-on (:cl-portaudio
+               :cl-portaudio-tests))
