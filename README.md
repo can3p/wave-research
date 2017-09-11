@@ -55,6 +55,9 @@ of bytes.
 Now that we now what kind of data we get we can try to feed it
 into port audio.
 
+Here is an initial try. Sound is horrible, which means I'm sending
+data wrong.
+
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
