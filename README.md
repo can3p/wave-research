@@ -30,15 +30,31 @@ package.
 Now we should be able to run a test example from cl-portaudio:
 
 ~~~lisp
-(with-audio
-    (format t "~%=== Wire on. Will run ~D seconds . ===~%" +seconds+)
-    (with-default-audio-stream (astream +num-channels+ +num-channels+ :sample-format +sample-format+ :sample-rate +sample-rate+ :frames-per-buffer +frames-per-buffer+)
-      (dotimes (i (round (/ (* +seconds+ +sample-rate+) +frames-per-buffer+)))
-        (write-stream astream
-                      (merge-channels-into-array astream
-                                                 (separate-array-to-channels astream
-(read-stream astream))))))))
+(portaudio-tests:test-read-write-converted-echo)
 ~~~
+
+At this point it's already clear that portaudio works and we
+can move on. Next step is to read the audio file and to output
+it. That won't be necessary for the analysis, but at least we'll
+know that we can do that, right? For that I've found nothing
+except [cl-wav][3] library.
+
+I defined a function `read-test-files` that will read the contents
+of test file! Resulting structure consists of three elements. First
+two are metadata, and the last one is an actual enourmous array
+of bytes.
+
+~~~lisp
+(getf (caddr (read-test-file)) :chunk-data-size)
+;; 3956072
+
+(take 20 (getf (caddr (read-test-file)) :chunk-data))
+;; #(252 255 253 255 251 255 249 255 0 0 2 0 250 255 247 255 253 255 0 0)
+~~~
+
+Now that we now what kind of data we get we can try to feed it
+into port audio.
 
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
+[3]: https://github.com/RobBlackwell/cl-wav
