@@ -1,7 +1,13 @@
 (defpackage #:wave-research
-  (:use #:cl #:portaudio #:portaudio-tests #:wav))
+  (:use #:cl #:portaudio #:portaudio-tests #:wav #:eazy-gnuplot))
 
 (in-package #:wave-research)
+
+(defconstant +frames-per-buffer+ 1024)
+(defconstant +sample-rate+ 44100)
+(defconstant +frame-duration+ (/ 1.0 +sample-rate+))
+(defconstant +sample-format+ :float)
+(defconstant +num-channels+ 2)
 
 (defun test-file-path ()
   (let ((fname (make-pathname :name "jumps" :type "wav"))
@@ -14,6 +20,38 @@
 
 (defun take (n list)
   (subseq list 0 n))
+
+(defun take-every (n arr)
+  (if (typep arr 'vector)
+      (loop for i from 0 upto (1- (length arr)) by n
+            collect (aref arr i))
+      (let ((idx 0)
+            (res (list)))
+        (loop for item in arr
+              do (when (= 0 idx)
+                   (push item res))
+                 (setf idx (mod (1+ idx) n))
+              finally (return (nreverse res))))))
+
+(defun audio-series (data)
+  (let ((ts 0.0)
+        (idx 0))
+    (loop while (< idx (length data))
+          collect (list ts (aref data idx))
+          do (incf ts +frame-duration+)
+             (incf idx 1))))
+
+(defun plot-audio-data (data)
+  (let ((series (take-every 100 (audio-series data))))
+    (with-plots (*standard-output* :debug nil)
+      (gp-setup :terminal '(:qt) :output "test.png")
+      (plot (lambda ()
+              (loop for p in series
+                    do (format t "~&~{~a~^ ~}" p)))
+            :using '(1 2)
+;;            :every 100
+            :with '(lines notitle))
+      (format t "~&pause mouse button1;~%"))))
 
 (defun read-test-file ()
   (read-wav-file (test-file-path)
@@ -31,12 +69,6 @@
                  (setf (aref buffer idx) (aref source (+ idx start))))
              (incf idx))
     buffer))
-    
-
-(defconstant +frames-per-buffer+ 1024)
-(defconstant +sample-rate+ 44100d0)
-(defconstant +sample-format+ :float)
-(defconstant +num-channels+ 2)
 
 (defun play-test-audio ()
   (let* ((frames (read-test-audio-data))

@@ -90,6 +90,34 @@ $ gnuplot test.plot
 
 Nice, let's get the same graph from common lisp.
 
+First of all we'll need a time series base on audio data:
+
+~~~lisp
+(audio-series (take 10 (read-test-autio-data)))
+;; ((0.0 -1.000001) (2.2675736961451248d-5 -1.0000007)
+;;  (4.5351473922902495d-5 -1.0000012) (6.802721088435374d-5 -1.0000017)
+;;  (9.070294784580499d-5 -1.0) (1.1337868480725624d-4 -0.9999995)
+;;  (1.3605442176870748d-4 -1.0000014) (1.5873015873015873d-4 -1.0000021)
+;;  (1.8140589569160998d-4 -1.0000007) (2.0408163265306123d-4 -1.0))
+~~~
+
+Time step is defined by a sampling rate
+
+Here is a plotting step:
+
+~~~lisp
+(plot-audio-data (read-test-audio-data))
+~~~
+
+It starts to be somewhat messy there. First of all, common lisp functions are
+not polymorphic and whatever works for arrays breaks for lists, so I
+had to modify `take-every` function to handle two separate cases. Why was
+this function needed in the first place? Because with simple printing
+all the values from the stream sbcl chokes and we don't want that.
+
+So, now we see with clarity that beat represents very sharp spikes of
+amplitude. My guess is that they should be even sharper if we take a
+derivative.
 
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio

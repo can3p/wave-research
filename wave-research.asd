@@ -17,4 +17,5 @@
                              (:file "wave-research"))))
   :depends-on (:cl-portaudio
                :cl-portaudio-tests
-               :cl-wav))
+               :cl-wav
+               :eazy-gnuplot))
