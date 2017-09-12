@@ -53,11 +53,24 @@ of bytes.
 ~~~
 
 Now that we now what kind of data we get we can try to feed it
-into port audio.
+into port audio. All functions are defined in [wave-research.lisp][4]
 
-Here is an initial try. Sound is horrible, which means I'm sending
-data wrong.
+~~~lisp
+(play-test-audio)
+~~~
+
+Hurray! It works. The tricky part was to join cl-wav and cl-portaudio
+formats together. cl-portaudio supports only floats, cl-wav can do
+both floats and integers, however with integers library produces
+the array twice the size. From the source code of cl-wav I understood
+that every frame is encoded with two bytes, so when converting to
+floats we get one values instead of two. ehm, ok.
+
+Now, since we got a proper sound stream we can try to do some analysis on
+top of it.
+
 
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
+[4]: https://github.com/can3p/wave-research/blob/master/src/wave-research.lisp
