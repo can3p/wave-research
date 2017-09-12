@@ -69,8 +69,32 @@ floats we get one values instead of two. ehm, ok.
 Now, since we got a proper sound stream we can try to do some analysis on
 top of it.
 
+And now the questions rises - how to analyze this data? I'd really like
+to have a look on it at first. After some searching I decided to try my
+luck with [eazy-guplot][5] package. Fiddling with images is not cool, so
+we'd better get qt terminal:
+
+~~~bash
+$ brew install gnuplot --with-qt
+~~~
+
+Stackoverflow [provided][6] with a [working snippet][7] for wave visualization.
+This snippet expected a huge dat file with data which I don't want to
+attach, however it can be easily generated with `sox`:
+
+~~~bash
+$ brew install sox
+$ sox jumps.wav jumps.dat
+$ gnuplot test.plot
+~~~
+
+Nice, let's get the same graph from common lisp.
+
 
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
 [4]: https://github.com/can3p/wave-research/blob/master/src/wave-research.lisp
+[5]: https://github.com/guicho271828/eazy-gnuplot
+[6]: https://stackoverflow.com/questions/5826701/plot-audio-data-in-gnuplot
+[7]: https://github.com/can3p/wave-research/blob/master/test.plot
