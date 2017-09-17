@@ -1,11 +1,5 @@
 (in-package #:wave-research)
 
-(defconstant +frames-per-buffer+ 1024)
-(defconstant +sample-rate+ 44100)
-(defconstant +frame-duration+ (/ 1.0 +sample-rate+))
-(defconstant +sample-format+ :float)
-(defconstant +num-channels+ 2)
-
 (defun test-file-path ()
   (let ((fname (make-pathname :name "jumps" :type "wav"))
         (asdf-location (asdf:system-source-file :wave-research)))
@@ -60,7 +54,7 @@
       (with-default-audio-stream (astream +num-channels+ +num-channels+
                                   :sample-format +sample-format+
                                   :sample-rate +sample-rate+
-                                  :frames-per-buffer +frames-per-buffer+) 
+                                  :frames-per-buffer +frames-per-buffer+)
         (loop while (< idx max-idx)
               do (fill-buffer buffer frames idx
                               (+ idx buffer-size))
