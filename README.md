@@ -119,6 +119,17 @@ So, now we see with clarity that beat represents very sharp spikes of
 amplitude. My guess is that they should be even sharper if we take a
 derivative.
 
+After extensive search I stumbled upon the excellent [talk][8] by Anna Wszeborowska
+where she did much more then I needed, and one of the comments had a [link][9]
+to the repo. Basically she implemented threshold based detection using FFT
+which I remember nothing about except the name. I was worried that the
+example is in python and depends on numpy which has no comparable library
+in common lisp land, but fortunately not that much was needed - FFT by
+itself and hann window function, both were provided by [bordeaux-fft][10] library.
+
+Now the task is to port this code to common lisp and tie the code to the microphone.
+not the test audio file.
+
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
@@ -126,3 +137,6 @@ derivative.
 [5]: https://github.com/guicho271828/eazy-gnuplot
 [6]: https://stackoverflow.com/questions/5826701/plot-audio-data-in-gnuplot
 [7]: https://github.com/can3p/wave-research/blob/master/test.plot
+[8]: https://www.youtube.com/watch?v=at2NppqIZok
+[9]: https://github.com/aniawsz/rtmonoaudio2midi
+[10]: http://vintage-digital.com/hefner/software/bordeaux-fft/manual.html
