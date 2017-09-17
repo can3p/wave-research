@@ -21,5 +21,6 @@
   :depends-on (:cl-portaudio
                :cl-portaudio-tests
                :cl-wav
+               :cl-slice
                :eazy-gnuplot
                :bordeaux-fft))

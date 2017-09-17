@@ -77,6 +77,12 @@
 (defclass <spectrum-analyzer> ()
   (last-spectrum
    last-flux
+   (hwindow :initform (hann-window (* +frames-per-buffer+ +num-channels+))
+            :reader hwindow)
+   (inner-pad :initform (make-array (* +frames-per-buffer+ +num-channels+)
+                          :element-type 'double-float
+                          :initial-element 0.0d0)
+              :reader inner-pad)
    (first-peak :initform nil :reader first-peak-p)))
 
 (defun mark-peak (analyzer)
@@ -85,11 +91,19 @@
 (defun contains-peak-p (analyzer spectrum)
   (declare (ignore analyzer spectrum)))
 
-(defun autopower-spectrum (data)
-  (declare (ignore data)))
+(defun autopower-spectrum (analyzer data)
+  (let* ((window-size (length data))
+         (windowed (map 'vector #'* data (hwindow analyzer)))
+         (padded (concatenate 'vector (inner-pad analyzer) windowed))
+         (spectrum (map 'vector #'(lambda (x) (/ x window-size))
+                        (bordeaux-fft:sfft padded)))
+         (autopower (map 'vector #'(lambda (x y) (abs (* x y)))
+                         spectrum
+                         (map 'vector #'conjugate spectrum))))
+    (slice autopower (cons 0 window-size))))
 
 (defun analyze-data-and-check-peak-p (analyzer data)
-  (let* ((spectrum (autopower-spectrum data)))
+  (let* ((spectrum (autopower-spectrum analyzer data)))
     (when (not (first-peak-p analyzer))
       (mark-peak analyzer)
       (contains-peak-p analyzer spectrum))))

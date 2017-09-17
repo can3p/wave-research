@@ -1,5 +1,10 @@
 (defpackage #:wave-research
-  (:use #:cl #:portaudio #:portaudio-tests #:wav #:eazy-gnuplot))
+  (:use #:cl
+        #:portaudio
+        #:portaudio-tests
+        #:wav
+        #:eazy-gnuplot
+        #:cl-slice))
 
 (in-package #:wave-research)
 
