@@ -14,8 +14,12 @@
   :serial T
   :components ((:module "src"
                 :components (
+                             (:file "package")
+                             (:file "ring-buffer")
+                             (:file "helpers")
                              (:file "wave-research"))))
   :depends-on (:cl-portaudio
                :cl-portaudio-tests
                :cl-wav
-               :eazy-gnuplot))
+               :eazy-gnuplot
+               :bordeaux-fft))

@@ -1,6 +1,3 @@
-(defpackage #:wave-research
-  (:use #:cl #:portaudio #:portaudio-tests #:wav #:eazy-gnuplot))
-
 (in-package #:wave-research)
 
 (defconstant +frames-per-buffer+ 1024)
