@@ -59,6 +59,7 @@
         (loop while (< idx max-idx)
               do (fill-buffer buffer frames idx
                               (+ idx buffer-size))
-                 (print (autopower-spectrum analyzer buffer))
+                 (when (contains-peak-p analyzer (autopower-spectrum analyzer buffer))
+                   (print "peak!~%"))
                  (write-stream astream buffer)
                  (incf idx buffer-size))))))
