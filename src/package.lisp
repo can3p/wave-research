@@ -16,5 +16,5 @@
 
 (defconstant +fft-size+ 1024)
 (defconstant +window-size+ 2048)
-(defconstant +threshold-window-size+ 11)
-(defconstant +threshold-multiplier+ 10)
+(defconstant +threshold-window-size+ 1100)
+(defconstant +threshold-multiplier+ 50)

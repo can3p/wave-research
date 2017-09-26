@@ -63,3 +63,18 @@
                    (print "peak!~%"))
                  (write-stream astream buffer)
                  (incf idx buffer-size))))))
+
+(defun analyze-data-from-mic ()
+  (let* ((analyzer (make-instance '<spectrum-analyzer>))
+         (count 0))
+    (with-audio
+      (with-default-audio-stream (astream +num-channels+ +num-channels+
+                                  :sample-format +sample-format+
+                                  :sample-rate +sample-rate+
+                                  :frames-per-buffer +frames-per-buffer+)
+        (loop while t
+              do (let ((buffer (read-stream astream)))
+                   (when (contains-peak-p analyzer
+                                          (autopower-spectrum analyzer buffer))
+                     (incf count)
+                     (format t "peak! ~s~%" count))))))))

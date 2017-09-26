@@ -127,8 +127,14 @@ example is in python and depends on numpy which has no comparable library
 in common lisp land, but fortunately not that much was needed - FFT by
 itself and hann window function, both were provided by [bordeaux-fft][10] library.
 
-Now the task is to port this code to common lisp and tie the code to the microphone.
-not the test audio file.
+After porting the code I got it working reasonably well, both from audio file and
+from microphone. Microphone appeared to be a bit more tricky because I had to
+implement an infinite loop to continuously read the data from the mic. Makes a
+lot of sense if I think about it now. I had to increase thresholds drastically to
+make the analyzer less prone to false positives.
+
+Now, since everything is in place now, we need to get visualization working.
+Initially I decided to try out [trivial-gamekit][11] which has a very nice [tutorial][12]
 
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
@@ -140,3 +146,5 @@ not the test audio file.
 [8]: https://www.youtube.com/watch?v=at2NppqIZok
 [9]: https://github.com/aniawsz/rtmonoaudio2midi
 [10]: http://vintage-digital.com/hefner/software/bordeaux-fft/manual.html
+[11]: https://borodust.org/projects/trivial-gamekit
+[12]: https://borodust.org/projects/trivial-gamekit/getting-started/

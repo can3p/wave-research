@@ -16,6 +16,7 @@
                 :components (
                              (:file "package")
                              (:file "ring-buffer")
+                             (:file "spectrum-check")
                              (:file "helpers")
                              (:file "wave-research"))))
   :depends-on (:cl-portaudio
