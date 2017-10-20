@@ -60,7 +60,7 @@
               do (fill-buffer buffer frames idx
                               (+ idx buffer-size))
                  (when (contains-peak-p analyzer (autopower-spectrum analyzer buffer))
-                   (print "peak!~%"))
+                   (format t "peak! frame ~s, time ~s ~%" idx (* +num-channels+ (/ idx +sample-rate+))))
                  (write-stream astream buffer)
                  (incf idx buffer-size))))))
 
