@@ -136,6 +136,25 @@ make the analyzer less prone to false positives.
 Now, since everything is in place now, we need to get visualization working.
 Initially I decided to try out [trivial-gamekit][11] which has a very nice [tutorial][12]
 
+I bet it works awesome for some people, however, sbcl *really* does not want
+to play well there without some [tricks][13]. In addition to the most of sdl-based
+graphic libraries caused very high cpu usage for me (with notable exception
+of trivial-gamekit to be fair), plus using those libraries implied that I'll
+do window handling, image loading and lots of other boilerplate on my own
+which I did not want to do at all. In the worst case I would have to draw
+graphs by myself and the scale of this task started making me really sad.
+
+After a couple of days filled with banging my head against the wall there
+I suddenly came to a revelation, that I don't need to go that way at all, since
+I already have all-mighty emacs at hand. Quick search proved that my guess was
+[right][14] and simple [change][15] to emacs config enabled the desired feature
+for me.
+
+Another option and potentially cooler one could be to employ [integration][16] with
+junyper notebooks. Well, it would be cooler if we had well-baked ready made
+libraries in common lisp world and we don't. Just have a look on all the goodness
+that is already [there][17] in python.
+
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
@@ -148,3 +167,8 @@ Initially I decided to try out [trivial-gamekit][11] which has a very nice [tuto
 [10]: http://vintage-digital.com/hefner/software/bordeaux-fft/manual.html
 [11]: https://borodust.org/projects/trivial-gamekit
 [12]: https://borodust.org/projects/trivial-gamekit/getting-started/
+[13]: https://github.com/lispgames/cl-sdl2/issues/89
+[14]: https://righele.it/2012/02/22/display-images-in-slime-from-common-lisp/
+[15]: https://github.com/can3p/emacs.d/commit/a49fbd52ef5f1e59ada016efc9c7e4b15178d468
+[16]: https://github.com/fredokun/cl-jupyter/
+[17]: http://nbviewer.jupyter.org/github/AllenDowney/ThinkDSP/blob/master/code/chap11.ipynb

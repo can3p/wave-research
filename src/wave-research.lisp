@@ -1,9 +1,20 @@
 (in-package #:wave-research)
 
+(defun in-system-path (name extension)
+  (let ((fname (make-pathname :name name :type extension))
+        (asdf-location (asdf:system-source-file :wave-research)))
+    (merge-pathnames fname asdf-location)))
+
 (defun test-file-path ()
   (let ((fname (make-pathname :name "jumps" :type "wav"))
         (asdf-location (asdf:system-source-file :wave-research)))
     (merge-pathnames fname asdf-location)))
+
+(defun plot-png (pathname)
+  (let ((filename (namestring pathname)))
+    (swank:eval-in-emacs
+     `(slime-media-insert-image (create-image ,filename)
+                                ,filename))))
 
 (defun audio-series (data)
   (let ((ts 0.0)
@@ -14,16 +25,17 @@
              (incf idx 1))))
 
 (defun plot-audio-data (data)
-  (let ((series (take-every 100 (audio-series data))))
+  (let ((series (take-every 100 (audio-series data)))
+        (filename (in-system-path "test" "png")))
     (with-plots (*standard-output* :debug nil)
-      (gp-setup :terminal '(:qt) :output "test.png")
+      (gp-setup :output filename)
       (plot (lambda ()
               (loop for p in series
                     do (format t "~&~{~a~^ ~}" p)))
             :using '(1 2)
 ;;            :every 100
-            :with '(lines notitle))
-      (format t "~&pause mouse button1;~%"))))
+            :with '(lines notitle)))
+    filename))
 
 (defun read-test-file ()
   (read-wav-file (test-file-path)

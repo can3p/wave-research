@@ -24,6 +24,4 @@
                :cl-wav
                :cl-slice
                :eazy-gnuplot
-               ;;requires (ql-dist:install-dist "http://bodge.borodust.org/dist/org.borodust.bodge.txt")
-               :trivial-gamekit
                :bordeaux-fft))
