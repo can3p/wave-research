@@ -155,6 +155,9 @@ junyper notebooks. Well, it would be cooler if we had well-baked ready made
 libraries in common lisp world and we don't. Just have a look on all the goodness
 that is already [there][17] in python.
 
+By hooking into `print-object` for pathname we can also remove a need in explicit
+call of `plot-png` function.
+
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav

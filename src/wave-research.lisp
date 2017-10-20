@@ -16,6 +16,10 @@
      `(slime-media-insert-image (create-image ,filename)
                                 ,filename))))
 
+(defmethod print-object :before ((obj pathname) stream)
+  (when (string= "png" (pathname-type obj))
+    (plot-png obj)))
+
 (defun audio-series (data)
   (let ((ts 0.0)
         (idx 0))
