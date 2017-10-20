@@ -158,6 +158,10 @@ that is already [there][17] in python.
 By hooking into `print-object` for pathname we can also remove a need in explicit
 call of `plot-png` function.
 
+Actually, after reading Allen Downey [book][18] I came to revelation how shockingly
+nonconvenient were array operations in lisp by default and I started thinking
+if there are any common lisp libraries that ease the pain.
+
 [1]: https://github.com/can3p/wave-research/blob/master/jumps.wav
 [2]: https://github.com/filonenko-mikhail/cl-portaudio
 [3]: https://github.com/RobBlackwell/cl-wav
