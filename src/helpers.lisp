@@ -29,3 +29,15 @@
                  (setf idx (mod (1+ idx) n))
               finally (return (nreverse res))))))
 
+
+(defun interleaved-to-arrays (array num-values &key (type 'single-float))
+  (when (> (mod (length array) num-values) 0)
+    (error "Cannot split array, because it's not a multiple of number of values"))
+
+  (let* ((frames (/ (length array) num-values))
+         (separated (make-array (list num-values frames)
+                                :element-type type)))
+    (dotimes (frame frames separated)
+      (dotimes (value-idx num-values separated)
+        (setf (aref separated value-idx frame)
+              (aref array (+ (* frame num-values) value-idx)))))))

@@ -46,7 +46,7 @@
                  :chunk-data-reader (wrap-data-chunk-data-samples-reader)))
 
 (defun read-test-audio-data ()
-  (getf (caddr (read-test-file)) :chunk-data))
+  (slice (interleaved-to-arrays (getf (caddr (read-test-file)) :chunk-data) 2) 0 t))
 
 (defun fill-buffer (buffer source start end)
   (let ((src-len (length source))
