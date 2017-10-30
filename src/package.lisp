@@ -15,6 +15,6 @@
 (defconstant +num-channels+ 1)
 
 (defconstant +fft-size+ 1024)
-(defconstant +window-size+ 2048)
+(defconstant +window-size+ 1024)
 (defconstant +threshold-window-size+ 11)
 (defconstant +threshold-multiplier+ 10)
