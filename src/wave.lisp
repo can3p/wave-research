@@ -7,6 +7,8 @@
    (frames-per-buffer :initform +frames-per-buffer+ :reader frames-per-buffer)))
 
 
+(defclass <real-time-wave> (<wave>) ())
+
 (defclass <static-wave> (<wave>)
   (
    (audio-data :initarg :audio-data
@@ -26,10 +28,27 @@
 
 (defgeneric frame-count (wave))
 
-(defmethod frame-count ((wave <wave>))
+(defmethod frame-count ((wave <static-wave>))
   (length (audio-data wave)))
 
 (defgeneric for-each-buffer (wave func))
+
+(defmethod for-each-buffer ((wave <real-time-wave>) func)
+  (let* ((buffer (make-buffer wave))
+         (buffer-size (frame-count buffer))
+         (idx 0))
+    (with-audio
+      (with-default-audio-stream (astream (num-channels wave) (num-channels wave)
+                                  :sample-format :float
+                                  :sample-rate (sample-rate wave)
+                                  :frames-per-buffer (frames-per-buffer wave))
+        (loop while t
+              do (fill-buffer (audio-data buffer)
+                              (read-stream astream) 0 buffer-size)
+             (setf (frame-index buffer) idx)
+             (setf (ts buffer) (* (num-channels buffer) (/ idx (sample-rate buffer))))
+             (funcall func buffer)
+             (incf idx buffer-size))))))
 
 (defmethod for-each-buffer ((wave <static-wave>) func)
   (let* ((buffer (make-buffer wave))
@@ -48,6 +67,9 @@
 (defun load-wave (source)
   (make-instance '<static-wave>
                  :audio-data (read-audio-data source)))
+
+(defun from-mic ()
+  (make-instance '<real-time-wave>))
 
 (defun audio-series (wave &key (ts 0.0))
   (let ((idx 0)
