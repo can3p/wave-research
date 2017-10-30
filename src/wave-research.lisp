@@ -58,6 +58,22 @@
              (incf idx))
     buffer))
 
+(defun analyze-test-audio ()
+  (let* ((frames (read-test-audio-data))
+         (buffer-size (* +frames-per-buffer+ +num-channels+))
+         (idx 0)
+         (max-idx (1- (length frames)))
+         (analyzer (make-instance '<spectrum-analyzer>))
+         (buffer (make-array buffer-size
+                             :element-type 'single-float
+                             :initial-element 0.0)))
+    (loop while (< idx max-idx)
+          do (fill-buffer buffer frames idx
+                          (+ idx buffer-size))
+             (when (contains-peak-p analyzer (autopower-spectrum analyzer buffer))
+               (format t "peak! frame ~s, time ~s ~%" idx (* +num-channels+ (/ idx +sample-rate+))))
+             (incf idx buffer-size))))
+
 (defun play-test-audio ()
   (let* ((frames (read-test-audio-data))
          (buffer-size (* +frames-per-buffer+ +num-channels+))
