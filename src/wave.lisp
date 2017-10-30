@@ -12,8 +12,13 @@
    (audio-data :initarg :audio-data
                :accessor audio-data)))
 
+(defclass <buffer> (<static-wave>)
+  (
+   (ts :initform 0.0 :accessor ts)
+   (frame-index :initform 0 :accessor frame-index)))
+
 (defun make-buffer (wave)
-  (make-instance '<static-wave>
+  (make-instance '<buffer>
                  :audio-data (make-array (* (frames-per-buffer wave)
                                             (num-channels wave))
                                          :element-type 'single-float
@@ -35,6 +40,8 @@
     (loop while (< idx max-idx)
           do (fill-buffer (audio-data buffer) frames idx
                           (+ idx buffer-size))
+             (setf (frame-index buffer) idx)
+             (setf (ts buffer) (* (num-channels buffer) (/ idx (sample-rate buffer))))
              (funcall func buffer)
              (incf idx buffer-size))))
 

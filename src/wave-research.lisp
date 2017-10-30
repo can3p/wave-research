@@ -5,63 +5,30 @@
         (asdf-location (asdf:system-source-file :wave-research)))
     (merge-pathnames fname asdf-location)))
 
-(defun plot-audio-data (data)
-  (let ((series (take-every 100 (audio-series data)))
-        (filename (in-system-path "test" "png")))
-    (with-plots (*standard-output* :debug nil)
-      (gp-setup :output filename)
-      (plot (lambda ()
-              (loop for p in series
-                    do (format t "~&~{~a~^ ~}" p)))
-            :using '(1 2)
-;;            :every 100
-            :with '(lines notitle)))
-    filename))
-
-(defun read-test-file ()
-  (read-wav-file (test-file-path)
-                 :chunk-data-reader (wrap-data-chunk-data-samples-reader)))
-
-(defun read-test-audio-data ()
-  (slice (interleaved-to-arrays (getf (caddr (read-test-file)) :chunk-data) 2) 0 t))
+(defun check-buffer-for-spike (buffer analyzer)
+  (when (contains-peak-p analyzer (autopower-spectrum analyzer
+                                                      (audio-data buffer)))
+    (format t "peak! frame ~s, time ~s ~%"
+            (frame-index buffer) (ts buffer))))
 
 (defun analyze-test-audio ()
-  (let* ((frames (read-test-audio-data))
-         (buffer-size (* +frames-per-buffer+ +num-channels+))
-         (idx 0)
-         (max-idx (1- (length frames)))
-         (analyzer (make-instance '<spectrum-analyzer>))
-         (buffer (make-array buffer-size
-                             :element-type 'single-float
-                             :initial-element 0.0)))
-    (loop while (< idx max-idx)
-          do (fill-buffer buffer frames idx
-                          (+ idx buffer-size))
-             (when (contains-peak-p analyzer (autopower-spectrum analyzer buffer))
-               (format t "peak! frame ~s, time ~s ~%" idx (* +num-channels+ (/ idx +sample-rate+))))
-             (incf idx buffer-size))))
+  (let ((wave (load-wave (test-file-path)))
+        (analyzer (make-instance '<spectrum-analyzer>)))
+    (for-each-buffer wave #'(lambda (buffer)
+                              (check-buffer-for-spike buffer analyzer)))))
 
 (defun play-test-audio ()
-  (let* ((frames (read-test-audio-data))
-         (buffer-size (* +frames-per-buffer+ +num-channels+))
-         (idx 0)
-         (max-idx (1- (length frames)))
-         (analyzer (make-instance '<spectrum-analyzer>))
-         (buffer (make-array buffer-size
-                             :element-type 'single-float
-                             :initial-element 0.0)))
+  (let ((wave (load-wave (test-file-path)))
+        (analyzer (make-instance '<spectrum-analyzer>)))
     (with-audio
-      (with-default-audio-stream (astream +num-channels+ +num-channels+
-                                  :sample-format +sample-format+
-                                  :sample-rate +sample-rate+
-                                  :frames-per-buffer +frames-per-buffer+)
-        (loop while (< idx max-idx)
-              do (fill-buffer buffer frames idx
-                              (+ idx buffer-size))
-                 (when (contains-peak-p analyzer (autopower-spectrum analyzer buffer))
-                   (format t "peak! frame ~s, time ~s ~%" idx (* +num-channels+ (/ idx +sample-rate+))))
-                 (write-stream astream buffer)
-                 (incf idx buffer-size))))))
+      (with-default-audio-stream (astream (num-channels wave) (num-channels wave)
+                                  :sample-format :float
+                                  :sample-rate (sample-rate wave)
+                                  :frames-per-buffer (frames-per-buffer wave))
+        (for-each-buffer wave #'(lambda (buffer)
+                                  (check-buffer-for-spike buffer analyzer)
+                                  (write-stream astream (audio-data buffer)))
+                         )))))
 
 (defun analyze-data-from-mic ()
   (let* ((analyzer (make-instance '<spectrum-analyzer>))
