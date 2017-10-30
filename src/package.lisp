@@ -3,6 +3,7 @@
         #:portaudio
         #:portaudio-tests
         #:wav
+        #:cl-arrows
         #:eazy-gnuplot
         #:cl-slice))
 

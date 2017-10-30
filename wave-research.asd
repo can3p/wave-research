@@ -15,6 +15,8 @@
   :components ((:module "src"
                 :components (
                              (:file "package")
+                             (:file "read-wav")
+                             (:file "wave")
                              (:file "ring-buffer")
                              (:file "spectrum-check")
                              (:file "helpers")
@@ -23,5 +25,6 @@
                :cl-portaudio-tests
                :cl-wav
                :cl-slice
+               :cl-arrows
                :eazy-gnuplot
                :bordeaux-fft))
