@@ -17,6 +17,7 @@
                              (:file "package")
                              (:file "read-wav")
                              (:file "wave")
+                             (:file "player")
                              (:file "ring-buffer")
                              (:file "spectrum-check")
                              (:file "helpers")

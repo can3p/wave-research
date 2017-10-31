@@ -64,6 +64,28 @@
              (funcall func buffer)
              (incf idx buffer-size))))
 
+(defun analyze-wave (wave &rest processor-classes)
+  (let ((processors (mapcar #'make-instance processor-classes)))
+    (dolist (p processors)
+      (setup-processor p wave))
+    (for-each-buffer wave #'(lambda (buffer)
+                              (dolist (p processors)
+                                (analyze-buffer p buffer))))
+    (dolist (p processors)
+      (cleanup-processor p))))
+
+(defgeneric analyze-buffer (processor buffer))
+
+(defmethod analyze-buffer (processor buffer))
+
+(defgeneric setup-processor (processor wave))
+
+(defmethod setup-processor (processor wave))
+
+(defgeneric cleanup-processor (processor))
+
+(defmethod cleanup-processor (processor))
+
 (defun load-wave (source)
   (make-instance '<static-wave>
                  :audio-data (read-audio-data source)))
