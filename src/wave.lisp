@@ -75,7 +75,9 @@
              (incf idx buffer-size))))
 
 (defmethod for-each-buffer ((wave <filtered-wave>) func)
-  (let ((filters-objects (mapcar #'make-instance (filters wave))))
+  (let ((filters-objects (mapcar #'(lambda (x) (if (listp x)
+                                                   (apply 'make-instance x)
+                                                   (make-instance x))) (filters wave))))
     (dolist (p filters-objects)
       (setup-filter p wave))
     (for-each-buffer (parent-wave wave)
@@ -90,7 +92,9 @@
       (cleanup-filter p))))
 
 (defun analyze-wave (wave &rest processor-classes)
-  (let ((processors (mapcar #'make-instance processor-classes)))
+  (let ((processors (mapcar #'(lambda (x) (if (listp x)
+                                                   (apply 'make-instance x)
+                                                   (make-instance x))) processor-classes)))
     (dolist (p processors)
       (setup-processor p wave))
     (for-each-buffer wave #'(lambda (buffer)

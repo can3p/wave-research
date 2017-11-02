@@ -27,3 +27,7 @@
 (defun analyze-data-from-mic ()
   (let* ((wave (from-mic)))
     (analyze-wave wave '<spectrum-analyzer>)))
+
+(defun plot-test-amplification (&optional (ratio 2))
+  (let ((wave (load-wave (test-file-path))))
+    (plot-wave (filter-wave wave (list '<amplifier> :ratio ratio)))
