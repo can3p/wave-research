@@ -3,3 +3,5 @@
 .#*
 jumps.dat
 test.png
+test_*.png
+.DS_Store
