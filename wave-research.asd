@@ -10,13 +10,14 @@
   :author "Dmitry Petrov <dpetroff@gmail.com>"
   :maintainer "Dmitry Petrov <dpetroff@gmail.com>"
   :description "What is it like working with sound in Common Lisp?"
-  :homepage "https://github.com/can3p/cl-commonmark"
+  :homepage "https://github.com/can3p/wave-research"
   :serial T
   :components ((:module "src"
                 :components (
                              (:file "package")
                              (:file "read-wav")
                              (:file "wave")
+                             (:file "filters")
                              (:file "player")
                              (:file "ring-buffer")
                              (:file "spectrum-check")

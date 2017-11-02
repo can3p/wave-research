@@ -14,6 +14,13 @@
    (audio-data :initarg :audio-data
                :accessor audio-data)))
 
+(defclass <filtered-wave> (<static-wave>)
+  (
+   (filters :initarg :filters
+            :accessor filters)
+   (parent-wave :initarg :parent-wave
+              :accessor parent-wave)))
+
 (defclass <buffer> (<static-wave>)
   (
    (ts :initform 0.0 :accessor ts)
@@ -30,6 +37,9 @@
 
 (defmethod frame-count ((wave <static-wave>))
   (length (audio-data wave)))
+
+(defmethod frame-count ((wave <filtered-wave>))
+  (frame-count (parent-wave wave)))
 
 (defgeneric for-each-buffer (wave func))
 
@@ -63,6 +73,21 @@
              (setf (ts buffer) (* (num-channels buffer) (/ idx (sample-rate buffer))))
              (funcall func buffer)
              (incf idx buffer-size))))
+
+(defmethod for-each-buffer ((wave <filtered-wave>) func)
+  (let ((filters-objects (mapcar #'make-instance (filters wave))))
+    (dolist (p filters-objects)
+      (setup-filter p wave))
+    (for-each-buffer (parent-wave wave)
+                     #'(lambda (buffer)
+                         (let ((new-data (reduce #'(lambda (b filter)
+                                                     (filter-buffer filter b))
+                                                 filters-objects
+                                                 :initial-value (audio-data buffer))))
+                           (setf (audio-data buffer) new-data)
+                           (funcall func buffer))))
+    (dolist (p filters-objects)
+      (cleanup-filter p))))
 
 (defun analyze-wave (wave &rest processor-classes)
   (let ((processors (mapcar #'make-instance processor-classes)))
@@ -116,16 +141,31 @@
             :with '(lines notitle)))
     filename))
 
-(defgeneric play-wave (wave))
+(defgeneric filter-buffer (filter buffer))
 
-(defmethod play-wave ((wave <static-wave>))
-  (with-audio
-    (with-default-audio-stream (astream (num-channels wave) (num-channels wave)
-                                :sample-format :float
-                                :sample-rate (sample-rate wave)
-                                :frames-per-buffer (frames-per-buffer wave))
+(defmethod filter-buffer (filter buffer) buffer)
+
+(defgeneric setup-filter (filter wave))
+
+(defmethod setup-filter (filter wave))
+
+(defgeneric cleanup-filter (filter))
+
+(defmethod cleanup-filter (filter))
+
+(defun filter-wave (wave &rest filter-classes)
+  (make-instance '<filtered-wave>
+                 :parent-wave wave
+                 :filters filter-classes))
+
+(defmethod audio-data ((wave <filtered-wave>))
+  (let ((data (make-array (frame-count (parent-wave wave))
+                          :element-type 'single-float
+                          :initial-element 0.0))
+        (idx 0))
     (for-each-buffer wave #'(lambda (buffer)
-          (write-stream astream (audio-data buffer)))))))
-
-
-
+                              (fill-buffer data (audio-data buffer)
+                                           0 (frame-count buffer) idx)
+                              (incf idx (frame-count buffer))))
+    ;; (audio-data (parent-wave wave))))
+    data))
