@@ -104,7 +104,7 @@
 (defgeneric plot-wave (wave))
 
 (defmethod plot-wave ((wave <static-wave>))
-  (let ((series (audio-series wave))
+  (let ((series (audio-series (audio-data wave)))
         (filename (in-system-path "test" "png")))
     (with-plots (*standard-output* :debug nil)
       (gp-setup :output filename)
